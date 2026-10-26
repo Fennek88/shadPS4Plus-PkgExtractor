@@ -1,0 +1,1 @@
+make -j2 -C ../externals/cryptopp libcryptopp.a

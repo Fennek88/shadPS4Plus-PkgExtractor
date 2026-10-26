@@ -1,0 +1,82 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes build-essential cmake qt6-base-dev zlib1g-dev
+      - name: Configure
+        run: cmake -S . -B build/linux -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build/linux --parallel 2
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pkg-extractor-linux
+          path: |
+            build/linux/pkg_extractor
+            readme_linux.txt
+
+  macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install build dependencies
+        run: brew install qt zlib
+      - name: Configure
+        run: cmake -S . -B build/macos -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(brew --prefix qt);$(brew --prefix zlib)" -DZLIB_USE_STATIC_LIBS=ON
+      - name: Build
+        run: cmake --build build/macos --parallel 2
+      - name: Bundle Qt frameworks
+        run: |
+          "$(brew --prefix qt)/bin/macdeployqt" build/macos/pkg_extractor.app
+          ditto -c -k --sequesterRsrc --keepParent build/macos/pkg_extractor.app pkg-extractor-macos.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pkg-extractor-macos
+          path: pkg-extractor-macos.zip
+
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            make
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-toolchain
+            mingw-w64-ucrt-x86_64-qt6-base
+            mingw-w64-ucrt-x86_64-zlib
+      - name: Configure
+        run: cmake -S . -B build/windows -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/ucrt64
+      - name: Build
+        run: cmake --build build/windows --parallel 2
+      - name: Bundle Windows executable
+        run: |
+          mkdir -p dist/windows
+          if command -v windeployqt6 >/dev/null 2>&1; then
+            windeployqt6 --release --compiler-runtime --no-translations --dir dist/windows build/windows/pkg_extractor.exe
+          else
+            windeployqt --release --compiler-runtime --no-translations --dir dist/windows build/windows/pkg_extractor.exe
+          fi
+          cp /ucrt64/bin/zlib1.dll dist/windows/
+          cp install_pkg.bat batch_install.bat readme_windows.txt dist/windows/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pkg-extractor-windows
+          path: dist/windows/

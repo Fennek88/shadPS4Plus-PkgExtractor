@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="PkgExtractor" targetName="pkg_extractor" />
+      <config projectName="PkgExtractor" targetName="cryptopp_build" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" NO_GENERATOR="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="bedb1836-d295-486c-adb0-524c514fa7f5" name="Änderungen" comment="">
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ShadPs4Plus.PkgExtractor.desktop" beforeDir="false" afterPath="$PROJECT_DIR$/ShadPs4Plus.PkgExtractor.desktop" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cryptobuild" beforeDir="false" afterPath="$PROJECT_DIR$/build/cryptobuild" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/install_pkg.sh" beforeDir="false" afterPath="$PROJECT_DIR$/install_pkg.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Fennek88&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/AzaharPlus/shadPS4Plus&quot;,
+    &quot;accountId&quot;: &quot;b3ee87b7-a1fc-4303-9aac-48c6c507fc8c&quot;
+  }
+}</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/main.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file:///usr/include/x86_64-linux-gnu/qt6/QtCore/qobject.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///home/andre/Dev/Projects/shadPS4Plus/extractor/main.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/andre/Dev/Projects/shadPS4Plus/extractor/src/core/file_format/pkg.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///home/andre/Dev/Projects/shadPS4Plus/extractor/translations.cpp" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.4158195394644522" />
+      <entry key="MS500" value="3.685129678346907" />
+      <entry key="S2" value="11.720463654430374" />
+      <entry key="S5" value="20.663266944470312" />
+      <entry key="S10" value="32.31939496387196" />
+      <entry key="S30" value="67.94439351943713" />
+      <entry key="S60" value="116.91071364661487" />
+      <entry key="M2" value="194.35312008859677" />
+      <entry key="M5" value="358.1779739632438" />
+      <entry key="M10" value="582.6377532533147" />
+      <entry key="M15" value="768.7853000460127" />
+      <entry key="M30" value="1141.8018552834967" />
+      <entry key="H1" value="1491.4969996921388" />
+      <entry key="H2" value="1746.374466944855" />
+      <entry key="H4" value="1903.234399840021" />
+      <entry key="D1" value="2052.771674676788" />
+      <entry key="W1" value="2080.3456337118237" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.3866829917352104" />
+      <entry key="MS500" value="3.6701799193676883" />
+      <entry key="S2" value="11.708204229530189" />
+      <entry key="S5" value="20.65445699473115" />
+      <entry key="S10" value="32.31253482058312" />
+      <entry key="S30" value="67.93961186190396" />
+      <entry key="S60" value="116.90634036451019" />
+      <entry key="M2" value="194.34825127072858" />
+      <entry key="M5" value="358.1729760297696" />
+      <entry key="M10" value="582.6336483257359" />
+      <entry key="M15" value="768.7818210259617" />
+      <entry key="M30" value="1141.7993899064234" />
+      <entry key="H1" value="1491.4954066658338" />
+      <entry key="H2" value="1746.3735313985064" />
+      <entry key="H4" value="1903.233887782086" />
+      <entry key="D1" value="2052.7715821353463" />
+      <entry key="W1" value="2080.345620299672" />
+    </decayedShown>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="Rider" />
+    <option name="majorVersion" value="2026" />
+    <option name="minorVersion" value="2.3.1" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3LBVmftvk3jqOe0Yb0kXyhbP1hy" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "CMake Application.pkg_extractor.executor": "Run",
+    "CMake Debug.PkgExtractor.executor": "Debug",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHELLCHECK.PATH": "/home/andre/.local/share/JetBrains/Rider2026.2/Shell Script/shellcheck",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "ShadPs4Plus",
+    "last_opened_file_path": "/home/andre/Dev/Projects/shadPS4Plus",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
+    "settings.editor.selected.configurable": "CMakeSettings"
+  }
+}]]></component>
+  <component name="RunManager" selected="CMake Application.pkg_extractor">
+    <configuration name="PkgExtractor" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory" temporary="true">
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cryptopp_build" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="PkgExtractor" TARGET_NAME="cryptopp_build" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="pkg_extractor" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="PkgExtractor" TARGET_NAME="pkg_extractor" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="PkgExtractor" RUN_TARGET_NAME="pkg_extractor">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.cryptopp_build" />
+      <item itemvalue="CMake Application.pkg_extractor" />
+      <item itemvalue="CMake Debug.PkgExtractor" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="CMake Debug.PkgExtractor" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Standard-Task">
+      <changelist id="bedb1836-d295-486c-adb0-524c514fa7f5" name="Änderungen" comment="" />
+      <created>1792927613347</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1792927613347</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.OperationCanceledException" breakIfHandledByOtherCode="false" displayValue="System.OperationCanceledException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.Tasks.TaskCanceledException" breakIfHandledByOtherCode="false" displayValue="System.Threading.Tasks.TaskCanceledException" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+        <breakpoint enabled="true" type="DotNet_Exception_Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="3" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
