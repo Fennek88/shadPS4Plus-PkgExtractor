@@ -27,11 +27,8 @@
   <component name="ChangeListManager">
     <list default="true" id="91499ad8-cc8d-4590-aac5-5c3ed23effde" name="Änderungen" comment="">
       <changelist_data name="Fennek88" email="" automatic="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/indexLayout.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,23 +66,23 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.3258231534674425" />
-      <entry key="MS500" value="2.3710971642218803" />
-      <entry key="S2" value="4.506905748011354" />
-      <entry key="S5" value="6.169749699714424" />
-      <entry key="S10" value="6.990540221137717" />
-      <entry key="S30" value="7.73393790121986" />
-      <entry key="S60" value="9.979191208247961" />
-      <entry key="M2" value="18.34201631323338" />
-      <entry key="M5" value="35.29238670669174" />
-      <entry key="M10" value="46.124188939551274" />
-      <entry key="M15" value="50.73238091848913" />
-      <entry key="M30" value="55.98479881110327" />
-      <entry key="H1" value="58.888577358189956" />
-      <entry key="H2" value="60.41716669557479" />
-      <entry key="H4" value="61.2016496573399" />
-      <entry key="D1" value="61.86596523283996" />
-      <entry key="W1" value="61.98082808808904" />
+      <entry key="MS100" value="1.7339077874082627" />
+      <entry key="MS500" value="4.28215756895306" />
+      <entry key="S2" value="11.90310689440412" />
+      <entry key="S5" value="20.053928862043126" />
+      <entry key="S10" value="26.042985270871686" />
+      <entry key="S30" value="32.07675258998214" />
+      <entry key="S60" value="33.95480859773224" />
+      <entry key="M2" value="35.38023182334404" />
+      <entry key="M5" value="43.43210140626966" />
+      <entry key="M10" value="57.549802708261744" />
+      <entry key="M15" value="66.60541540535172" />
+      <entry key="M30" value="79.51349580332263" />
+      <entry key="H1" value="87.92366059531913" />
+      <entry key="H2" value="92.73356364267491" />
+      <entry key="H4" value="95.30699692657784" />
+      <entry key="D1" value="97.542620974017" />
+      <entry key="W1" value="97.93444764028598" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -107,23 +104,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.2982901499346835" />
-      <entry key="MS500" value="2.3604365773837315" />
-      <entry key="S2" value="4.501326457358913" />
-      <entry key="S5" value="6.166600964137182" />
-      <entry key="S10" value="6.988739369257037" />
-      <entry key="S30" value="7.733264918125631" />
-      <entry key="S60" value="9.978690315786169" />
-      <entry key="M2" value="18.34090939300989" />
-      <entry key="M5" value="35.288596006092995" />
-      <entry key="M10" value="46.119808980916915" />
-      <entry key="M15" value="50.72849671512068" />
-      <entry key="M30" value="55.98220967276286" />
-      <entry key="H1" value="58.88708156057895" />
-      <entry key="H2" value="60.416362642365144" />
-      <entry key="H4" value="61.201232795770494" />
-      <entry key="D1" value="61.86589362463771" />
-      <entry key="W1" value="61.980817805204516" />
+      <entry key="MS100" value="1.6641321469105712" />
+      <entry key="MS500" value="4.249145133509099" />
+      <entry key="S2" value="11.880094452984672" />
+      <entry key="S5" value="20.036888862263037" />
+      <entry key="S10" value="26.031153744784916" />
+      <entry key="S30" value="32.071619036514" />
+      <entry key="S60" value="33.952050896827096" />
+      <entry key="M2" value="35.3787757147004" />
+      <entry key="M5" value="43.43067248105082" />
+      <entry key="M10" value="57.54744136984955" />
+      <entry key="M15" value="66.6028643097405" />
+      <entry key="M30" value="79.51138140540499" />
+      <entry key="H1" value="87.92229138091665" />
+      <entry key="H2" value="92.73278364822615" />
+      <entry key="H4" value="95.30658054224202" />
+      <entry key="D1" value="97.54254767666768" />
+      <entry key="W1" value="97.93443707052138" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -157,8 +154,8 @@
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "master",
-    "git.auto.fetch.suggestion.counter": "2",
+    "git-widget-placeholder": "main",
+    "git.auto.fetch.suggestion.counter": "3",
     "last_opened_file_path": "/home/andre/Dev/Projects/shadPS4Plus-PkgExtractor",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -241,6 +238,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Reworked the PkgExtrctor as a uncoupled project&#10;Added a Qt6 UI while keeping the command line support&#10;Added multilanguage support. Languages can be added via translations.json" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reworked the PkgExtrctor as a uncoupled project&#10;Added a Qt6 UI while keeping the command line support&#10;Added multilanguage support. Languages can be added via translations.json" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
