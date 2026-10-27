@@ -26,7 +26,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91499ad8-cc8d-4590-aac5-5c3ed23effde" name="Änderungen" comment="">
-      <change beforePath="$PROJECT_DIR$/src/common/io_file.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/common/io_file.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +49,9 @@
     &quot;assignee&quot;: &quot;Fennek88&quot;
   }
 }</component>
+  <component name="GithubDefaultAccount">
+    <option name="defaultAccountId" value="b3ee87b7-a1fc-4303-9aac-48c6c507fc8c" />
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/Fennek88/shadPS4Plus-PkgExtractor&quot;,
@@ -65,61 +69,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.620487517919044" />
-      <entry key="MS500" value="4.824574747737096" />
-      <entry key="S2" value="12.654471466544365" />
-      <entry key="S5" value="24.032334177558543" />
-      <entry key="S10" value="35.62998542656468" />
-      <entry key="S30" value="50.119490497825296" />
-      <entry key="S60" value="55.21271602771633" />
-      <entry key="M2" value="59.19110339558366" />
-      <entry key="M5" value="71.26366717915117" />
-      <entry key="M10" value="90.40113888398773" />
-      <entry key="M15" value="104.15051624424666" />
-      <entry key="M30" value="126.04243522530014" />
-      <entry key="H1" value="141.7421539782731" />
-      <entry key="H2" value="151.21814985079314" />
-      <entry key="H4" value="156.4340445404309" />
-      <entry key="D1" value="161.0469561901234" />
-      <entry key="W1" value="161.86321468220507" />
+      <entry key="MS100" value="1.3352699556319032" />
+      <entry key="MS500" value="2.75914215345512" />
+      <entry key="S2" value="3.611856943725875" />
+      <entry key="S5" value="3.83710605713981" />
+      <entry key="S10" value="3.917218623986301" />
+      <entry key="S30" value="3.972103759167166" />
+      <entry key="S60" value="3.9867793101683273" />
+      <entry key="M2" value="4.115321587041748" />
+      <entry key="M5" value="10.005117898607962" />
+      <entry key="M10" value="43.19852943353967" />
+      <entry key="M15" value="83.18365109210323" />
+      <entry key="M30" value="171.2312609294152" />
+      <entry key="H1" value="251.84644195741205" />
+      <entry key="H2" value="307.4311691024062" />
+      <entry key="H4" value="340.24525113294334" />
+      <entry key="D1" value="370.57912894230117" />
+      <entry key="W1" value="376.0752077042453" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="1.812175598470187E-282" />
-      <entry key="S2" value="3.669019919118324E-71" />
-      <entry key="S5" value="6.696070659011629E-29" />
-      <entry key="S10" value="8.182952192828456E-15" />
-      <entry key="S30" value="2.0151312500080372E-5" />
-      <entry key="S60" value="0.004489021329875852" />
-      <entry key="M2" value="0.0670001591779888" />
-      <entry key="M5" value="0.3391800765005776" />
-      <entry key="M10" value="0.582391686496792" />
-      <entry key="M15" value="0.6973917058015027" />
-      <entry key="M30" value="0.835099817867003" />
-      <entry key="H1" value="0.9138379603994385" />
-      <entry key="H2" value="0.955948722683094" />
-      <entry key="H4" value="0.9777263025423268" />
-      <entry key="D1" value="0.9962527879931289" />
-      <entry key="W1" value="0.9994638223097803" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="1.3545653044362693E-147" />
+      <entry key="S10" value="3.6804419631835825E-74" />
+      <entry key="S30" value="3.3263401500535393E-25" />
+      <entry key="S60" value="5.767443237738484E-13" />
+      <entry key="M2" value="7.594368464683843E-7" />
+      <entry key="M5" value="0.003566125852106417" />
+      <entry key="M10" value="0.05971704825346305" />
+      <entry key="M15" value="0.15277966565034096" />
+      <entry key="M30" value="0.3908703949525237" />
+      <entry key="H1" value="0.6251962851397322" />
+      <entry key="H2" value="0.7906935469192432" />
+      <entry key="H4" value="0.8892095067638627" />
+      <entry key="D1" value="0.98061985620833" />
+      <entry key="W1" value="0.9972081329682738" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.555534232815131" />
-      <entry key="MS500" value="4.786319038279014" />
-      <entry key="S2" value="12.629561610164396" />
-      <entry key="S5" value="24.01386620257824" />
-      <entry key="S10" value="35.61648965286866" />
-      <entry key="S30" value="50.11324843649232" />
-      <entry key="S60" value="55.21358620341696" />
-      <entry key="M2" value="59.25490094508987" />
-      <entry key="M5" value="71.59899320254524" />
-      <entry key="M10" value="90.97961528196188" />
-      <entry key="M15" value="104.84416728940674" />
-      <entry key="M30" value="126.87460161572551" />
-      <entry key="H1" value="142.65408918227303" />
-      <entry key="H2" value="152.17300576037903" />
-      <entry key="H4" value="157.4111840421519" />
-      <entry key="D1" value="162.0431050852868" />
-      <entry key="W1" value="162.86266350677636" />
+      <entry key="MS100" value="1.2585605446638712" />
+      <entry key="MS500" value="2.7289904417538877" />
+      <entry key="S2" value="3.6021152754797523" />
+      <entry key="S5" value="3.832976744556425" />
+      <entry key="S10" value="3.9151126045085807" />
+      <entry key="S30" value="3.9713923074994946" />
+      <entry key="S60" value="3.986422340942026" />
+      <entry key="M2" value="4.115139873950782" />
+      <entry key="M5" value="10.008439025981275" />
+      <entry key="M10" value="43.25731792392282" />
+      <entry key="M15" value="83.33493305463662" />
+      <entry key="M30" value="171.62008795523124" />
+      <entry key="H1" value="252.46986252001395" />
+      <entry key="H2" value="308.22067665807384" />
+      <entry key="H4" value="341.1337730434395" />
+      <entry key="D1" value="371.5596189427894" />
+      <entry key="W1" value="377.072396881844" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -162,18 +166,18 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "python.packages.toolwindow.project.migrated.to.right.top.v2": "true",
-    "settings.editor.selected.configurable": "ml.llm.AIAssistantPromptsLibrary"
+    "settings.editor.selected.configurable": "ml.llm.LLMConfigurable"
   }
 }]]></component>
   <component name="RunManager" selected="CMake Application.pkg_extractor">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="pkg_extractor&#10;" type="CMakeListConfigurationType" factoryName="CMakeListConfigurationFactory">
       <method v="2">
         <option name="Build Solution" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="cryptopp_build" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="PkgExtractor" TARGET_NAME="cryptopp_build" CONFIG_NAME="Debug">
@@ -239,7 +243,8 @@
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="Reworked the PkgExtrctor as a uncoupled project&#10;Added a Qt6 UI while keeping the command line support&#10;Added multilanguage support. Languages can be added via translations.json" />
     <MESSAGE value="Updated README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated README.md" />
+    <MESSAGE value="Updated io_file.cpp to fix build process on macos" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated io_file.cpp to fix build process on macos" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
