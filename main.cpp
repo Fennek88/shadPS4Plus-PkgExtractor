@@ -670,6 +670,8 @@ namespace
             outputPath_->setMinimumHeight(36);
             inputButton_->setFixedSize(120, 36);
             outputButton_->setFixedSize(120, 36);
+            inputButton_->setEnabled(true);
+            outputButton_->setEnabled(true);
             inputRow->addWidget(inputLabel_);
             inputRow->addWidget(inputPath_);
             inputRow->addWidget(inputButton_);
