@@ -4,6 +4,14 @@ project(PkgExtractor)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(APPLE)
+	# Use @rpath based install names and point them at the Frameworks
+	# directory inside the .app bundle so macdeployqt can resolve and
+	# relocate the Qt frameworks correctly.
+	set(CMAKE_MACOSX_RPATH ON)
+	set(CMAKE_INSTALL_RPATH "@executable_path/../Frameworks")
+endif()
+
 find_package(ZLIB 1.3 REQUIRED)
 
 include_directories(src)

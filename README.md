@@ -8,12 +8,11 @@ A desktop and command-line tool for extracting PlayStation 4 PKG files for use w
 
 - Extract base-game, game-update, and DLC PKG files.
 - Use the Qt desktop interface or run the extractor from a terminal.
-- In the GUI, choose a PKG and output directory, drag and drop paths into the fields, view extraction progress, and cancel an extraction.
+- In the GUI, choose a PKG-file and output directory and start extraction.
 - Automatically classify package content and create the corresponding output layout:
   - Base game: `<output>/<title-id>/`
   - Update: `<output>/<title-id>-patch/`
   - DLC: `<output>/<title-id>/<content-id-part>/`
-- Select the interface language in **Extras > Language**. Available translations are English, Chinese (Simplified), Spanish, French, and German. The system language is selected automatically when available; otherwise English is used.
 
 ## Usage
 
