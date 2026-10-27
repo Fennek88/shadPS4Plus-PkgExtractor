@@ -37,7 +37,7 @@ jobs:
         run: cmake --build build/macos --parallel 2
       - name: Bundle Qt frameworks
         run: |
-          "$(brew --prefix qt)/bin/macdeployqt" -verbose=3 "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app"
+          "$(brew --prefix qt)/bin/macdeployqt" "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" -verbose=3
           ditto -c -k --sequesterRsrc --keepParent "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" pkg-extractor-macos.zip
       - uses: actions/upload-artifact@v4
         with:

@@ -26,8 +26,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="91499ad8-cc8d-4590-aac5-5c3ed23effde" name="Änderungen" comment="">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/build.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/build.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.shadPS4Plus-PkgExtractor.cmake/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,61 +70,61 @@
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.3352699556319032" />
-      <entry key="MS500" value="2.75914215345512" />
-      <entry key="S2" value="3.611856943725875" />
-      <entry key="S5" value="3.83710605713981" />
-      <entry key="S10" value="3.917218623986301" />
-      <entry key="S30" value="3.972103759167166" />
-      <entry key="S60" value="3.9867793101683273" />
-      <entry key="M2" value="4.115321587041748" />
-      <entry key="M5" value="10.005117898607962" />
-      <entry key="M10" value="43.19852943353967" />
-      <entry key="M15" value="83.18365109210323" />
-      <entry key="M30" value="171.2312609294152" />
-      <entry key="H1" value="251.84644195741205" />
-      <entry key="H2" value="307.4311691024062" />
-      <entry key="H4" value="340.24525113294334" />
-      <entry key="D1" value="370.57912894230117" />
-      <entry key="W1" value="376.0752077042453" />
+      <entry key="MS100" value="1.0020360659391427" />
+      <entry key="MS500" value="1.2899658467925699" />
+      <entry key="S2" value="1.963061805386078" />
+      <entry key="S5" value="2.722455511289846" />
+      <entry key="S10" value="3.2347265197489046" />
+      <entry key="S30" value="3.70959732292672" />
+      <entry key="S60" value="3.8589559652999323" />
+      <entry key="M2" value="4.05886273229751" />
+      <entry key="M5" value="4.651884388175475" />
+      <entry key="M10" value="5.635107178801477" />
+      <entry key="M15" value="9.399419079198438" />
+      <entry key="M30" value="43.14153280622942" />
+      <entry key="H1" value="124.82770583989729" />
+      <entry key="H2" value="219.88194182691998" />
+      <entry key="H4" value="293.50560322609556" />
+      <entry key="D1" value="374.263227380573" />
+      <entry key="W1" value="390.2651406627936" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
-      <entry key="MS500" value="0.0" />
-      <entry key="S2" value="0.0" />
-      <entry key="S5" value="1.3545653044362693E-147" />
-      <entry key="S10" value="3.6804419631835825E-74" />
-      <entry key="S30" value="3.3263401500535393E-25" />
-      <entry key="S60" value="5.767443237738484E-13" />
-      <entry key="M2" value="7.594368464683843E-7" />
-      <entry key="M5" value="0.003566125852106417" />
-      <entry key="M10" value="0.05971704825346305" />
-      <entry key="M15" value="0.15277966565034096" />
-      <entry key="M30" value="0.3908703949525237" />
-      <entry key="H1" value="0.6251962851397322" />
-      <entry key="H2" value="0.7906935469192432" />
-      <entry key="H4" value="0.8892095067638627" />
-      <entry key="D1" value="0.98061985620833" />
-      <entry key="W1" value="0.9972081329682738" />
+      <entry key="MS500" value="7.889525165228397E-279" />
+      <entry key="S2" value="2.98031875942996E-70" />
+      <entry key="S5" value="1.5477652314861008E-28" />
+      <entry key="S10" value="1.244092131430024E-14" />
+      <entry key="S30" value="2.3171323885528835E-5" />
+      <entry key="S60" value="0.004813660133986282" />
+      <entry key="M2" value="0.06938054578904874" />
+      <entry key="M5" value="0.343950091453219" />
+      <entry key="M10" value="0.586994675381963" />
+      <entry key="M15" value="0.7071312885395395" />
+      <entry key="M30" value="0.9175798688610544" />
+      <entry key="H1" value="1.1986874181674725" />
+      <entry key="H2" value="1.4892202228524476" />
+      <entry key="H4" value="1.707884146099329" />
+      <entry key="D1" value="1.9451737220575598" />
+      <entry key="W1" value="1.9920015357145013" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.2585605446638712" />
-      <entry key="MS500" value="2.7289904417538877" />
-      <entry key="S2" value="3.6021152754797523" />
-      <entry key="S5" value="3.832976744556425" />
-      <entry key="S10" value="3.9151126045085807" />
-      <entry key="S30" value="3.9713923074994946" />
-      <entry key="S60" value="3.986422340942026" />
-      <entry key="M2" value="4.115139873950782" />
-      <entry key="M5" value="10.008439025981275" />
-      <entry key="M10" value="43.25731792392282" />
-      <entry key="M15" value="83.33493305463662" />
-      <entry key="M30" value="171.62008795523124" />
-      <entry key="H1" value="252.46986252001395" />
-      <entry key="H2" value="308.22067665807384" />
-      <entry key="H4" value="341.1337730434395" />
-      <entry key="D1" value="371.5596189427894" />
-      <entry key="W1" value="377.072396881844" />
+      <entry key="MS100" value="0.9746353370212504" />
+      <entry key="MS500" value="1.2828325532424927" />
+      <entry key="S2" value="1.9603423093213013" />
+      <entry key="S5" value="2.720946279886835" />
+      <entry key="S10" value="3.2338297874413358" />
+      <entry key="S30" value="3.7092765664125156" />
+      <entry key="S60" value="3.8634726832210466" />
+      <entry key="M2" value="4.127279677653187" />
+      <entry key="M5" value="4.99404836912124" />
+      <entry key="M10" value="6.220577545350507" />
+      <entry key="M15" value="10.10527784310329" />
+      <entry key="M30" value="44.057964509513305" />
+      <entry key="H1" value="126.02518610583928" />
+      <entry key="H2" value="221.3701517214361" />
+      <entry key="H4" value="295.2128144384942" />
+      <entry key="D1" value="376.20825693442555" />
+      <entry key="W1" value="392.2571206760945" />
     </decayedShown>
   </component>
   <component name="ProjectApplicationVersion">
@@ -145,7 +146,7 @@
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "CMake Application.pkg_extractor\n.executor": "Run",
-    "CMake Application.pkg_extractor.executor": "Debug",
+    "CMake Application.pkg_extractor.executor": "Run",
     "CMake Debug.pkg_extractor\n.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
@@ -244,7 +245,9 @@
     <MESSAGE value="Reworked the PkgExtrctor as a uncoupled project&#10;Added a Qt6 UI while keeping the command line support&#10;Added multilanguage support. Languages can be added via translations.json" />
     <MESSAGE value="Updated README.md" />
     <MESSAGE value="Updated io_file.cpp to fix build process on macos" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated io_file.cpp to fix build process on macos" />
+    <MESSAGE value="Updated workflow for macos" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/main'&#10;&#10;# Conflicts:&#10;#&#9;CMakeLists.txt" />
+    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/main'&#10;&#10;# Conflicts:&#10;#&#9;CMakeLists.txt" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
