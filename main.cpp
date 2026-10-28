@@ -609,7 +609,7 @@ namespace
         // Build the picker, progress, status, and action controls and connect their UI events.
         ExtractorWindow()
         {
-            menuBar_ = new QMenuBar(this);
+            menuBar_ = new QMenuBar(nullptr);
             fileMenu_ = menuBar_->addMenu(QString());
             openPkgAction_ = fileMenu_->addAction(QString());
             outputDirectoryAction_ = fileMenu_->addAction(QString());
@@ -760,9 +760,11 @@ namespace
 
         void SelectInputFile()
         {
+            // The native macOS dialog can fail to present in packaged Qt builds; use the Qt dialog implementation.
             const QString file = QFileDialog::getOpenFileName(
                 this, Translate(QStringLiteral("Select PKG file")), QDir::homePath(),
-                Translate(QStringLiteral("PS4 package files (*.pkg);;All files (*)")));
+                Translate(QStringLiteral("PS4 package files (*.pkg);;All files (*)")), nullptr,
+                QFileDialog::DontUseNativeDialog);
             if (!file.isEmpty())
             {
                 inputPath_->setText(file);
@@ -772,7 +774,8 @@ namespace
         void SelectOutputDirectory()
         {
             const QString directory = QFileDialog::getExistingDirectory(
-                this, Translate(QStringLiteral("Select output directory")), QDir::homePath());
+                this, Translate(QStringLiteral("Select output directory")), QDir::homePath(),
+                QFileDialog::DontUseNativeDialog);
             if (directory.isEmpty())
             {
                 return;
