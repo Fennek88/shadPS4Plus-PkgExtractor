@@ -30,6 +30,7 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QMimeData>
+#include <QMainWindow>
 #include <QPlainTextEdit>
 #include <QProgressBar>
 #include <QPushButton>
@@ -602,7 +603,7 @@ namespace
         std::atomic_bool cancelRequested_{false};
     };
 
-    class ExtractorWindow final : public QWidget
+    class ExtractorWindow final : public QMainWindow
     {
     public:
         // Build the picker, progress, status, and action controls and connect their UI events.
@@ -651,8 +652,11 @@ namespace
             // Keep translated labels and buttons from changing the window's layout dimensions.
             setMinimumWidth(680);
 
-            auto* layout = new QVBoxLayout(this);
-            layout->setMenuBar(menuBar_);
+            auto* centralWidget = new QWidget(this);
+            setCentralWidget(centralWidget);
+            auto* layout = new QVBoxLayout(centralWidget);
+            centralWidget->setLayout(layout);
+            setMenuBar(menuBar_);
             auto* inputRow = new QHBoxLayout;
             auto* outputRow = new QHBoxLayout;
             auto* actionRow = new QHBoxLayout;
@@ -930,6 +934,7 @@ int main(int argc, char** argv)
         QApplication app(argc, argv);
         ExtractorWindow window;
         window.show();
+        window.activateWindow();
         return app.exec();
     }
 #endif

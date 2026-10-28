@@ -74,9 +74,10 @@ jobs:
           else
             windeployqt --release --compiler-runtime --no-translations --dir dist/windows build/windows/pkg_extractor.exe
           fi
+          cp build/windows/pkg_extractor.exe dist/windows/
           cp /ucrt64/bin/zlib1.dll dist/windows/
           cp install_pkg.bat batch_install.bat readme_windows.txt dist/windows/
       - uses: actions/upload-artifact@v4
         with:
           name: pkg-extractor-windows
-          path: dist/windows/
+          path: dist/windows/pkg_extractor.exe
