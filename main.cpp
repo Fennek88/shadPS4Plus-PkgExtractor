@@ -610,6 +610,7 @@ namespace
         ExtractorWindow()
         {
             menuBar_ = new QMenuBar(nullptr);
+            menuBar_->setNativeMenuBar(true);
             fileMenu_ = menuBar_->addMenu(QString());
             openPkgAction_ = fileMenu_->addAction(QString());
             outputDirectoryAction_ = fileMenu_->addAction(QString());

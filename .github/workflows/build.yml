@@ -9,7 +9,7 @@ jobs:
   linux:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install build dependencies
         run: |
           sudo apt-get update
@@ -18,7 +18,7 @@ jobs:
         run: cmake -S . -B build/linux -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build/linux --parallel 2
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: pkg-extractor-linux
           path: |
@@ -28,7 +28,7 @@ jobs:
   macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install build dependencies
         run: brew install qt zlib
       - name: Configure
@@ -39,7 +39,7 @@ jobs:
         run: |
           "$(brew --prefix qt)/bin/macdeployqt" "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" -verbose=3
           ditto -c -k --sequesterRsrc --keepParent "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" pkg-extractor-macos.zip
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: pkg-extractor-macos
           path: pkg-extractor-macos.zip
@@ -50,7 +50,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
@@ -76,8 +76,11 @@ jobs:
           fi
           cp build/windows/pkg_extractor.exe dist/windows/
           cp /ucrt64/bin/zlib1.dll dist/windows/
+          cp /ucrt64/bin/libgcc_s_seh-1.dll dist/windows/
+          cp /ucrt64/bin/libstdc++-6.dll dist/windows/
+          cp /ucrt64/bin/libwinpthread-1.dll dist/windows/
           cp install_pkg.bat batch_install.bat readme_windows.txt dist/windows/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: pkg-extractor-windows
           path: dist/windows/
