@@ -35,7 +35,7 @@ const QJsonObject& TranslationTable() {
 QString Translate(const QString& key) {
     const QJsonObject& translations = TranslationTable();
     const QString language = SelectedLanguage().isEmpty()
-                                 ? QLocale::system().name().section(QLatin1Char('_'), 0, 0)
+                                 ? QLocale::system().name().left(2)
                                  : SelectedLanguage();
     const QJsonObject localized = translations.value(language).toObject();
     const QJsonObject english = translations.value(QStringLiteral("en")).toObject();
