@@ -95,6 +95,10 @@ jobs:
             esac
           done < <(printf '%s\n' "$dependencies" | sed -nE 's/^.* => (.*) \(0x[[:xdigit:]]+\)$/\1/p' | sort -u)
           cp install_pkg.bat batch_install.bat readme_windows.txt dist/pkg-extractor-windows/
+          printf '%s\r\n' \
+            '@echo off' \
+            'start "" /D "%~dp0pkg-extractor-windows" "%~dp0pkg-extractor-windows\pkg_extractor.exe" %*' \
+            > "dist/Start Pkg Extractor.bat"
       - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-windows

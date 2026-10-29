@@ -1,6 +1,6 @@
 1. pkg_extractor.exe
 	
-	Double click pkg_extractor.exe to open the GUI.
+	Double click "Start Pkg Extractor.bat" "pkg-extractor-windows\pkg_extractor.exe" to open the GUI.
 	Don't extract it out of the folder.
 	Can be also called in command line.
 	The first argument is the path to the pkg file to extract.
