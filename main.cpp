@@ -25,7 +25,6 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QLocale>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -622,12 +621,7 @@ namespace
             auto* languageGroup = new QActionGroup(this);
             languageGroup->setExclusive(true);
             const QStringList languages = AvailableLanguages();
-            const QString systemLanguage = QLocale::system().name().left(2);
-            const QString selectedLanguage = languages.contains(systemLanguage)
-                                                 ? systemLanguage
-                                                 : languages.contains(QStringLiteral("en"))
-                                                     ? QStringLiteral("en")
-                                                     : languages.value(0);
+            const QString selectedLanguage = SystemLanguage();
             SetLanguage(selectedLanguage);
             for (const QString& code : languages)
             {

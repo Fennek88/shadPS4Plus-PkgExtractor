@@ -35,7 +35,7 @@ const QJsonObject& TranslationTable() {
 QString Translate(const QString& key) {
     const QJsonObject& translations = TranslationTable();
     const QString language = SelectedLanguage().isEmpty()
-                                 ? QLocale::system().name().left(2)
+                                 ? SystemLanguage()
                                  : SelectedLanguage();
     const QJsonObject localized = translations.value(language).toObject();
     const QJsonObject english = translations.value(QStringLiteral("en")).toObject();
@@ -56,6 +56,27 @@ QStringList AvailableLanguages() {
     QStringList languages = TranslationTable().keys();
     languages.sort();
     return languages;
+}
+
+QString SystemLanguage() {
+    const QStringList languages = AvailableLanguages();
+    const auto findSupportedLanguage = [&languages](const QString& languageTag) {
+        const QString language = languageTag.left(2).toLower();
+        return languages.contains(language) ? language : QString{};
+    };
+
+    for (const QString& languageTag : QLocale::system().uiLanguages()) {
+        const QString language = findSupportedLanguage(languageTag);
+        if (!language.isEmpty()) {
+            return language;
+        }
+    }
+
+    const QString localeLanguage = findSupportedLanguage(QLocale::system().name());
+    if (!localeLanguage.isEmpty()) {
+        return localeLanguage;
+    }
+    return languages.contains(QStringLiteral("en")) ? QStringLiteral("en") : languages.value(0);
 }
 
 QString LanguageName(const QString& language) {

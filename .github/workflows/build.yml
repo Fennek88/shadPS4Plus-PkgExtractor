@@ -38,11 +38,10 @@ jobs:
       - name: Bundle Qt frameworks
         run: |
           "$(brew --prefix qt)/bin/macdeployqt" "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" -verbose=3
-          ditto -c -k --sequesterRsrc --keepParent "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" pkg-extractor-macos.zip
       - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-macos
-          path: pkg-extractor-macos.zip
+          path: build/macos/**/pkg_extractor.app/**
 
   windows:
     runs-on: windows-latest
@@ -62,6 +61,7 @@ jobs:
             mingw-w64-ucrt-x86_64-toolchain
             mingw-w64-ucrt-x86_64-qt6-base
             mingw-w64-ucrt-x86_64-zlib
+            mingw-w64-ucrt-x86_64-ntldd
       - name: Configure
         run: cmake -S . -B build/windows -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/ucrt64
       - name: Build
@@ -75,13 +75,19 @@ jobs:
             windeployqt --release --compiler-runtime --no-translations --dir dist/windows build/windows/pkg_extractor.exe
           fi
           cp build/windows/pkg_extractor.exe dist/windows/
-          cp /ucrt64/bin/zlib1.dll dist/windows/
-          cp /ucrt64/bin/libgcc_s_seh-1.dll dist/windows/
-          cp /ucrt64/bin/libstdc++-6.dll dist/windows/
-          cp /ucrt64/bin/libwinpthread-1.dll dist/windows/
-          for f in /ucrt64/bin/libb2*.dll /ucrt64/bin/libdouble-conversion*.dll /ucrt64/bin/libicu*.dll; do
-            if [ -f "$f" ]; then cp "$f" dist/windows/; fi
-          done
+          mapfile -d '' deployed_dlls < <(find dist/windows -type f -iname '*.dll' -print0)
+          dependencies=$(ntldd -R build/windows/pkg_extractor.exe "${deployed_dlls[@]}")
+          if grep -q '=> not found' <<< "$dependencies"; then
+            printf '%s\n' "$dependencies" >&2
+            echo "Unresolved Windows DLL dependencies found." >&2
+            exit 1
+          fi
+          while IFS= read -r dependency; do
+            dependency_path=$(cygpath -u "$dependency")
+            case "$dependency_path" in
+              /ucrt64/bin/*) cp "$dependency_path" dist/windows/ ;;
+            esac
+          done < <(printf '%s\n' "$dependencies" | sed -nE 's/^.* => (.*) \(0x[[:xdigit:]]+\)$/\1/p' | sort -u)
           cp install_pkg.bat batch_install.bat readme_windows.txt dist/windows/
       - uses: actions/upload-artifact@v6
         with:
