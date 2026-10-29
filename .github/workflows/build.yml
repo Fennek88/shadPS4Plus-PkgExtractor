@@ -18,12 +18,14 @@ jobs:
         run: cmake -S . -B build/linux -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build/linux --parallel 2
+      - name: Stage Linux artifact
+        run: |
+          mkdir -p dist/linux
+          cp build/linux/pkg_extractor readme_linux.txt dist/linux/
       - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-linux
-          path: |
-            pkg_extractor
-            readme_linux.txt
+          path: dist/linux/
 
   macos:
     runs-on: macos-latest
