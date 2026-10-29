@@ -18,7 +18,7 @@ jobs:
         run: cmake -S . -B build/linux -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build/linux --parallel 2
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-linux
           path: |
@@ -39,7 +39,7 @@ jobs:
         run: |
           "$(brew --prefix qt)/bin/macdeployqt" "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" -verbose=3
           ditto -c -k --sequesterRsrc --keepParent "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" pkg-extractor-macos.zip
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-macos
           path: pkg-extractor-macos.zip
@@ -79,11 +79,11 @@ jobs:
           cp /ucrt64/bin/libgcc_s_seh-1.dll dist/windows/
           cp /ucrt64/bin/libstdc++-6.dll dist/windows/
           cp /ucrt64/bin/libwinpthread-1.dll dist/windows/
-          for f in libb2*.dll libdouble-conversion*.dll libicu*.dll; do
-            if [ -e "/ucrt64/bin/$f" ]; then cp "/ucrt64/bin/$f" dist/windows/; fi
+          for f in /ucrt64/bin/libb2*.dll /ucrt64/bin/libdouble-conversion*.dll /ucrt64/bin/libicu*.dll; do
+            if [ -f "$f" ]; then cp "$f" dist/windows/; fi
           done
           cp install_pkg.bat batch_install.bat readme_windows.txt dist/windows/
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-windows
           path: dist/windows/
