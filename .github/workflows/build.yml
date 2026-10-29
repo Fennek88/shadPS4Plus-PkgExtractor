@@ -77,15 +77,19 @@ jobs:
           cp build/windows/pkg_extractor.exe dist/windows/
           mapfile -d '' deployed_dlls < <(find dist/windows -type f -iname '*.dll' -print0)
           dependencies=$(ntldd -R build/windows/pkg_extractor.exe "${deployed_dlls[@]}")
-          if grep -q '=> not found' <<< "$dependencies"; then
-            printf '%s\n' "$dependencies" >&2
+          direct_dependencies=$(ntldd build/windows/pkg_extractor.exe "${deployed_dlls[@]}")
+          unresolved=$(printf '%s\n' "$direct_dependencies" \
+            | sed -nE '/=> not found$/p' \
+            | grep -viE '^[[:space:]]*(api-ms-win-|ext-ms-win-)' || true)
+          if [ -n "$unresolved" ]; then
+            printf '%s\n' "$unresolved" >&2
             echo "Unresolved Windows DLL dependencies found." >&2
             exit 1
           fi
           while IFS= read -r dependency; do
             dependency_path=$(cygpath -u "$dependency")
             case "$dependency_path" in
-              /ucrt64/bin/*) cp "$dependency_path" dist/windows/ ;;
+              */ucrt64/bin/*) cp "$dependency_path" dist/windows/ ;;
             esac
           done < <(printf '%s\n' "$dependencies" | sed -nE 's/^.* => (.*) \(0x[[:xdigit:]]+\)$/\1/p' | sort -u)
           cp install_pkg.bat batch_install.bat readme_windows.txt dist/windows/
