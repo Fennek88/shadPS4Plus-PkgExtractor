@@ -68,14 +68,14 @@ jobs:
         run: cmake --build build/windows --parallel 2
       - name: Bundle Windows executable
         run: |
-          mkdir -p dist/windows
+          mkdir -p dist/pkg-extractor-windows
           if command -v windeployqt6 >/dev/null 2>&1; then
-            windeployqt6 --release --compiler-runtime --no-translations --dir dist/windows build/windows/pkg_extractor.exe
+            windeployqt6 --release --compiler-runtime --no-translations --dir dist/pkg-extractor-windows build/windows/pkg_extractor.exe
           else
-            windeployqt --release --compiler-runtime --no-translations --dir dist/windows build/windows/pkg_extractor.exe
+            windeployqt --release --compiler-runtime --no-translations --dir dist/pkg-extractor-windows build/windows/pkg_extractor.exe
           fi
-          cp build/windows/pkg_extractor.exe dist/windows/
-          mapfile -d '' deployed_dlls < <(find dist/windows -type f -iname '*.dll' -print0)
+          cp build/windows/pkg_extractor.exe dist/pkg-extractor-windows/
+          mapfile -d '' deployed_dlls < <(find dist/pkg-extractor-windows -type f -iname '*.dll' -print0)
           dependencies=$(ntldd -R build/windows/pkg_extractor.exe "${deployed_dlls[@]}")
           direct_dependencies=$(ntldd build/windows/pkg_extractor.exe "${deployed_dlls[@]}")
           unresolved=$(printf '%s\n' "$direct_dependencies" \
@@ -89,11 +89,11 @@ jobs:
           while IFS= read -r dependency; do
             dependency_path=$(cygpath -u "$dependency")
             case "$dependency_path" in
-              */ucrt64/bin/*) cp "$dependency_path" dist/windows/ ;;
+              */ucrt64/bin/*) cp "$dependency_path" dist/pkg-extractor-windows/ ;;
             esac
           done < <(printf '%s\n' "$dependencies" | sed -nE 's/^.* => (.*) \(0x[[:xdigit:]]+\)$/\1/p' | sort -u)
-          cp install_pkg.bat batch_install.bat readme_windows.txt dist/windows/
+          cp install_pkg.bat batch_install.bat readme_windows.txt dist/pkg-extractor-windows/
       - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-windows
-          path: dist/windows/
+          path: dist/
