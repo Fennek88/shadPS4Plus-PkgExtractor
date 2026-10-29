@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(PkgExtractor)
 
+if(WIN32)
+	enable_language(RC)
+endif()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -34,6 +38,38 @@ add_executable(
 		src/common/path_util.cpp
 		src/common/string_util.cpp
 )
+
+if(WIN32)
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/icon.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/icon.rc" @ONLY)
+	target_sources(pkg_extractor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/icon.rc")
+endif()
+
+if(APPLE)
+	set(APP_ICONSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/pkg_extractor.iconset")
+	set(APP_ICON "${CMAKE_CURRENT_BINARY_DIR}/pkg_extractor.icns")
+	add_custom_command(
+		OUTPUT "${APP_ICON}"
+		COMMAND "${CMAKE_COMMAND}" -E make_directory "${APP_ICONSET_DIR}"
+		COMMAND sips -z 16 16 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_16x16.png"
+		COMMAND sips -z 32 32 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_16x16@2x.png"
+		COMMAND sips -z 32 32 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_32x32.png"
+		COMMAND sips -z 64 64 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_32x32@2x.png"
+		COMMAND sips -z 128 128 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_128x128.png"
+		COMMAND sips -z 256 256 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_128x128@2x.png"
+		COMMAND sips -z 256 256 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_256x256.png"
+		COMMAND sips -z 512 512 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_256x256@2x.png"
+		COMMAND sips -z 512 512 "${CMAKE_CURRENT_SOURCE_DIR}/icon.png" --out "${APP_ICONSET_DIR}/icon_512x512.png"
+		COMMAND iconutil -c icns -o "${APP_ICON}" "${APP_ICONSET_DIR}"
+		DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/icon.png"
+		VERBATIM
+	)
+	set_source_files_properties("${APP_ICON}" PROPERTIES
+		GENERATED TRUE
+		MACOSX_PACKAGE_LOCATION Resources
+	)
+	target_sources(pkg_extractor PRIVATE "${APP_ICON}")
+	set_target_properties(pkg_extractor PROPERTIES MACOSX_BUNDLE_ICON_FILE pkg_extractor.icns)
+endif()
 
 find_program(CRYPTO_MAKE_EXECUTABLE NAMES mingw32-make gmake make)
 if(NOT CRYPTO_MAKE_EXECUTABLE)

@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QIcon>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
@@ -608,6 +609,7 @@ namespace
         // Build the picker, progress, status, and action controls and connect their UI events.
         ExtractorWindow()
         {
+            setWindowIcon(QIcon(QStringLiteral(":/icons/icon.png")));
             menuBar_ = new QMenuBar(nullptr);
             menuBar_->setNativeMenuBar(true);
             fileMenu_ = menuBar_->addMenu(QString());
