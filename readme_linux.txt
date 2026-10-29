@@ -1,6 +1,6 @@
-1. pkg_extractor.AppImage
+1. pkg_extractor
 	
-	Double click to run the GUI.
+	Double click pkg_extractor to run the GUI.
 	Can also be called in command line.
 	The first argument is the path to the pkg file to extract.
 	The second argument is where to extract it.
