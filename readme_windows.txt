@@ -1,6 +1,8 @@
 1. pkg_extractor.exe
 	
-	Can be called in command line.
+	Double click pkg_extractor.exe to open the GUI.
+	Don't extract it out of the folder.
+	Can be also called in command line.
 	The first argument is the path to the pkg file to extract.
 	The second argument is where to extract it.
 	If no second argument is provided, it will be extracted next to the pkg file.

@@ -22,7 +22,7 @@ jobs:
         with:
           name: pkg-extractor-linux
           path: |
-            build/linux/pkg_extractor
+            pkg_extractor
             readme_linux.txt
 
   macos:

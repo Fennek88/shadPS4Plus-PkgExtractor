@@ -1,6 +1,7 @@
 1. pkg_extractor.AppImage
 	
-	Can be called in command line.
+	Double click to run the GUI.
+	Can also be called in command line.
 	The first argument is the path to the pkg file to extract.
 	The second argument is where to extract it.
 	If no second argument is provided, it will be extracted next to the pkg file.
