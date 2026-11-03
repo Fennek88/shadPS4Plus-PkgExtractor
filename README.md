@@ -1,6 +1,6 @@
 # shadPS4Plus PKG Extractor
 
-A desktop and command-line tool for extracting PlayStation 4 PKG files for use with [shadPS4](https://github.com/shadps4-emu/shadPS4). The project is a rework of [AzaharPlus/shadPS4Plus](https://github.com/AzaharPlus/shadPS4Plus), with a Qt interface and multilingual support.
+A desktop and command-line tool for extracting PlayStation 4 PKG files for use with PS Emulators or Recomp Tools. The project is a rework of [AzaharPlus/shadPS4Plus](https://github.com/AzaharPlus/shadPS4Plus), with a Qt interface and multilingual support.
 
 ![shadPS4Plus PKG Extractor window](images/screenshots/screenshot-linux-01.png)
 
