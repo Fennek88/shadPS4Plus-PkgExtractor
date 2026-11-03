@@ -16,6 +16,13 @@ function(pkg_extractor_configure_target target)
 	else()
 		target_compile_options(${target} PRIVATE -Wall -Wextra)
 	endif()
+	if(WIN32)
+		target_compile_definitions(${target} PRIVATE
+			NTDDI_VERSION=0x0A000006
+			_WIN32_WINNT=0x0A00
+			WINVER=0x0A00
+		)
+	endif()
 	if(PKG_EXTRACTOR_SANITIZE AND NOT MSVC)
 		target_compile_options(${target} PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
 		target_link_options(${target} PRIVATE -fsanitize=address,undefined)
@@ -155,12 +162,4 @@ if(PKG_EXTRACTOR_BUILD_TESTS)
 		add_test(NAME pkg_extractor_scripts
 			COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_scripts.sh $<TARGET_FILE:pkg_extractor> ${CMAKE_CURRENT_SOURCE_DIR} "$ENV{PKG_TEST_PKG}")
 	endif()
-endif()
-
-if(WIN32)
-	target_compile_definitions(pkg_extractor PRIVATE
-		NTDDI_VERSION=0x0A000006
-		_WIN32_WINNT=0x0A00
-		WINVER=0x0A00
-	)
 endif()
