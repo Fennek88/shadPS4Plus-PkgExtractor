@@ -40,11 +40,15 @@ If the output directory is omitted, files are extracted beneath the current work
 
 `install_pkg.sh` and `install_pkg.bat` classify a package and route base games and updates to the configured games directory and DLC to the configured add-ons directory. Before using either script, edit its `gamesDir` and `addonsDir` values to match the paths configured in ShadPS4. The `batch_install.sh` and `batch_install.bat` helpers apply the install script to PKG files in a directory.
 
+The scripts are automation-safe: instead of editing them you can set the `GAMES_DIR` and `ADDONS_DIR` environment variables, they only wait for Enter on an interactive terminal (never with `--batch`), and they return a non-zero exit code on failure (batch scripts if any package failed).
+
+CLI reference: `pkg_extractor <pkg> [output-dir] [--no-pause]` extracts a package; `pkg_extractor <pkg> --print-type` prints `game`, `update` or `dlc`; `--check-type` is the legacy variant that exits with 101/102/103. Exit codes: 0 success, 1 failure, 2 invalid usage. Errors go to stderr; progress goes to stdout (one line per 10% when not a terminal).
+
 ## Build
 
 ### Requirements
 
-- CMake 3.16 or newer
+- CMake 3.20 or newer (the first release that supports `CMAKE_CXX_STANDARD 23`)
 - A C++23 compiler
 - GNU Make (used to build the bundled Crypto++)
 - Qt 6 Widgets
@@ -71,4 +75,4 @@ Translations are embedded from [`src/common/translations/translations.json`](src
 
 ## License
 
-This project incorporates code from the shadPS4 Emulator Project, which is licensed under [GPL-2.0-or-later](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+This project is licensed under [GPL-2.0-or-later](LICENSE), consistent with the shadPS4 code it incorporates. The bundled Crypto++ dependency has its own license; see [`externals/cryptopp/License.txt`](externals/cryptopp/License.txt).
