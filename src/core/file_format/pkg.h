@@ -105,7 +105,8 @@ public:
     ~PKG();
 
     bool Open(const std::filesystem::path& filepath, std::string& failreason);
-    bool ExtractFiles(const int index, const std::atomic_bool* cancelRequested = nullptr,
+    bool ExtractFiles(const int index, std::string& failreason,
+                      const std::atomic_bool* cancelRequested = nullptr,
                       const std::function<void(const std::string&, int, int)>& onProgress = {});
     bool Extract(const std::filesystem::path& filepath, const std::filesystem::path& extract,
                  std::string& failreason);
