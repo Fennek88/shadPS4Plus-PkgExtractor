@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.20)
 project(PkgExtractor)
 
 if(WIN32)
@@ -7,6 +7,20 @@ endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+option(PKG_EXTRACTOR_SANITIZE "Build with AddressSanitizer and UndefinedBehaviorSanitizer (GCC/Clang)" OFF)
+
+function(pkg_extractor_configure_target target)
+	if(MSVC)
+		target_compile_options(${target} PRIVATE /W4)
+	else()
+		target_compile_options(${target} PRIVATE -Wall -Wextra)
+	endif()
+	if(PKG_EXTRACTOR_SANITIZE AND NOT MSVC)
+		target_compile_options(${target} PRIVATE -fsanitize=address,undefined -fno-omit-frame-pointer)
+		target_link_options(${target} PRIVATE -fsanitize=address,undefined)
+	endif()
+endfunction()
 
 if(APPLE)
 	# Use @rpath based install names and point them at the Frameworks
@@ -25,6 +39,9 @@ include_directories(externals)
 add_executable(
 		pkg_extractor
 		main.cpp
+		src/app/package_extraction.cpp
+		src/app/extractor_window.cpp
+		src/app/extraction_thread.h
 		src/common/translations/translations.cpp
 		src/common/translations/translations.qrc
 		src/core/loader.cpp
@@ -109,6 +126,36 @@ if(APPLE)
 endif()
 target_compile_definitions(pkg_extractor PRIVATE PKG_EXTRACTOR_WITH_QT)
 target_link_libraries(pkg_extractor PRIVATE Qt6::Widgets)
+pkg_extractor_configure_target(pkg_extractor)
+
+option(PKG_EXTRACTOR_BUILD_TESTS "Build the automated tests" ON)
+if(PKG_EXTRACTOR_BUILD_TESTS)
+	enable_testing()
+	add_executable(
+		pkg_extractor_tests
+		tests/test_main.cpp
+		src/app/package_extraction.cpp
+		src/core/loader.cpp
+		src/core/file_format/pkg.cpp
+		src/core/file_format/psf.cpp
+		src/core/file_format/pkg_type.cpp
+		src/core/crypto/crypto.cpp
+		src/common/io_file.cpp
+		src/common/assert.cpp
+		src/common/error.cpp
+		src/common/path_util.cpp
+		src/common/string_util.cpp
+	)
+	add_dependencies(pkg_extractor_tests cryptopp_build)
+	target_link_libraries(pkg_extractor_tests PRIVATE libcryptopp ZLIB::ZLIB Qt6::Widgets)
+	set_target_properties(pkg_extractor_tests PROPERTIES AUTOMOC ON)
+	pkg_extractor_configure_target(pkg_extractor_tests)
+	add_test(NAME pkg_extractor_tests COMMAND pkg_extractor_tests)
+	if(UNIX)
+		add_test(NAME pkg_extractor_scripts
+			COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_scripts.sh $<TARGET_FILE:pkg_extractor> ${CMAKE_CURRENT_SOURCE_DIR} "$ENV{PKG_TEST_PKG}")
+	endif()
+endif()
 
 if(WIN32)
 	target_compile_definitions(pkg_extractor PRIVATE
