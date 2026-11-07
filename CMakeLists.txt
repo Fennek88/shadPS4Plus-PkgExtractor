@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(PkgExtractor)
+project(PkgExtractor VERSION 0.9.2)
 
 if(WIN32)
 	enable_language(RC)
@@ -39,6 +39,11 @@ if(APPLE)
 endif()
 
 find_package(ZLIB 1.3 REQUIRED)
+set(PKG_EXTRACTOR_USE_LIBARCHIVE OFF)
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux" OR WIN32 OR APPLE)
+	set(PKG_EXTRACTOR_USE_LIBARCHIVE ON)
+	find_package(LibArchive REQUIRED)
+endif()
 
 include_directories(src)
 include_directories(externals)
@@ -48,6 +53,9 @@ add_executable(
 		main.cpp
 		src/app/package_extraction.cpp
 		src/app/extractor_window.cpp
+		src/app/release_info.cpp
+		src/app/linux_update.cpp
+		src/app/update_settings.cpp
 		src/app/extraction_thread.h
 		src/common/translations/translations.cpp
 		src/common/translations/translations.qrc
@@ -65,10 +73,11 @@ add_executable(
 
 if(WIN32)
 	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/icon.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/icon.rc" @ONLY)
-	target_sources(pkg_extractor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/icon.rc")
+	target_sources(pkg_extractor PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/icon.rc" src/app/windows_update.cpp)
 endif()
 
 if(APPLE)
+	target_sources(pkg_extractor PRIVATE src/app/mac_update.cpp src/app/mac_update_zip.cpp)
 	set(APP_ICONSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/pkg_extractor.iconset")
 	set(APP_ICON "${CMAKE_CURRENT_BINARY_DIR}/pkg_extractor.icns")
 	add_custom_command(
@@ -119,21 +128,43 @@ add_dependencies(pkg_extractor cryptopp_build)
 target_link_libraries(pkg_extractor PRIVATE libcryptopp)
 target_link_libraries(pkg_extractor PRIVATE ZLIB::ZLIB)
 
-find_package(Qt6 6.0 QUIET COMPONENTS Widgets)
+find_package(Qt6 6.0 QUIET COMPONENTS Widgets Network)
 if(NOT Qt6_FOUND)
 	message(WARNING
-		"Qt 6 Widgets was not found. Install Qt 6 from https://www.qt.io/download-qt-installer "
+		"Qt 6 Widgets and Network were not found. Install Qt 6 from https://www.qt.io/download-qt-installer "
 		"and set CMAKE_PREFIX_PATH to your Qt installation if needed.")
-	message(FATAL_ERROR "Qt 6 Widgets is required to build the PKG extractor GUI.")
+	message(FATAL_ERROR "Qt 6 Widgets and Network are required to build the PKG extractor GUI.")
 endif()
 
 set_target_properties(pkg_extractor PROPERTIES AUTOMOC ON AUTORCC ON)
 if(APPLE)
 	set_target_properties(pkg_extractor PROPERTIES MACOSX_BUNDLE ON)
 endif()
-target_compile_definitions(pkg_extractor PRIVATE PKG_EXTRACTOR_WITH_QT)
-target_link_libraries(pkg_extractor PRIVATE Qt6::Widgets)
+target_compile_definitions(pkg_extractor PRIVATE PKG_EXTRACTOR_WITH_QT PKG_EXTRACTOR_VERSION="${PROJECT_VERSION}")
+target_link_libraries(pkg_extractor PRIVATE Qt6::Widgets Qt6::Network)
+if(PKG_EXTRACTOR_USE_LIBARCHIVE AND NOT APPLE)
+	target_sources(pkg_extractor PRIVATE src/app/windows_update_archive.cpp)
+endif()
+if(PKG_EXTRACTOR_USE_LIBARCHIVE)
+	target_link_libraries(pkg_extractor PRIVATE LibArchive::LibArchive)
+endif()
 pkg_extractor_configure_target(pkg_extractor)
+
+if(WIN32)
+	# Windows chooses console behavior from the executable's subsystem, so keep
+	# a console build for scripts and use the GUI subsystem for the main app.
+	get_target_property(PKG_EXTRACTOR_SOURCES pkg_extractor SOURCES)
+	add_executable(pkg_extractor_cli ${PKG_EXTRACTOR_SOURCES})
+	add_dependencies(pkg_extractor_cli cryptopp_build)
+	set_target_properties(pkg_extractor PROPERTIES WIN32_EXECUTABLE ON)
+	set_target_properties(pkg_extractor_cli PROPERTIES AUTOMOC ON AUTORCC ON)
+	target_compile_definitions(pkg_extractor_cli PRIVATE PKG_EXTRACTOR_WITH_QT PKG_EXTRACTOR_VERSION="${PROJECT_VERSION}")
+	target_link_libraries(pkg_extractor_cli PRIVATE libcryptopp ZLIB::ZLIB Qt6::Widgets Qt6::Network LibArchive::LibArchive)
+	if(TARGET Qt6::EntryPoint)
+		target_link_libraries(pkg_extractor PRIVATE Qt6::EntryPoint)
+	endif()
+	pkg_extractor_configure_target(pkg_extractor_cli)
+endif()
 
 option(PKG_EXTRACTOR_BUILD_TESTS "Build the automated tests" ON)
 if(PKG_EXTRACTOR_BUILD_TESTS)
@@ -142,6 +173,9 @@ if(PKG_EXTRACTOR_BUILD_TESTS)
 		pkg_extractor_tests
 		tests/test_main.cpp
 		src/app/package_extraction.cpp
+		src/app/release_info.cpp
+		src/app/linux_update.cpp
+		src/app/update_settings.cpp
 		src/core/loader.cpp
 		src/core/file_format/pkg.cpp
 		src/core/file_format/psf.cpp
@@ -155,9 +189,21 @@ if(PKG_EXTRACTOR_BUILD_TESTS)
 	)
 	add_dependencies(pkg_extractor_tests cryptopp_build)
 	target_link_libraries(pkg_extractor_tests PRIVATE libcryptopp ZLIB::ZLIB Qt6::Widgets)
+	if(PKG_EXTRACTOR_USE_LIBARCHIVE AND NOT APPLE)
+		target_sources(pkg_extractor_tests PRIVATE src/app/windows_update_archive.cpp)
+	endif()
+	if(PKG_EXTRACTOR_USE_LIBARCHIVE)
+		target_link_libraries(pkg_extractor_tests PRIVATE LibArchive::LibArchive)
+	endif()
+	if(APPLE)
+		target_sources(pkg_extractor_tests PRIVATE src/app/mac_update.cpp src/app/mac_update_zip.cpp)
+	endif()
 	set_target_properties(pkg_extractor_tests PROPERTIES AUTOMOC ON)
 	pkg_extractor_configure_target(pkg_extractor_tests)
 	add_test(NAME pkg_extractor_tests COMMAND pkg_extractor_tests)
+	if(WIN32)
+		add_test(NAME pkg_extractor_cli_help COMMAND pkg_extractor_cli --help)
+	endif()
 	if(UNIX)
 		add_test(NAME pkg_extractor_scripts
 			COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/test_scripts.sh $<TARGET_FILE:pkg_extractor> ${CMAKE_CURRENT_SOURCE_DIR} "$ENV{PKG_TEST_PKG}")

@@ -15,6 +15,12 @@
 #ifdef PKG_EXTRACTOR_WITH_QT
 #include "app/extractor_window.h"
 #endif
+#ifdef _WIN32
+#include "app/windows_update.h"
+#endif
+#ifdef __APPLE__
+#include "app/mac_update.h"
+#endif
 
 using namespace PackageExtraction;
 
@@ -68,6 +74,14 @@ namespace
 // Run the Qt interface without arguments; otherwise run the command-line extractor.
 int main(int argc, char** argv)
 {
+#ifdef _WIN32
+    if (argc > 1 && std::string(argv[1]) == "--windows-update-helper")
+        return RunWindowsUpdateHelper(argc, argv);
+#endif
+#ifdef __APPLE__
+    if (argc > 1 && std::string(argv[1]) == "--mac-update-helper")
+        return RunMacUpdateHelper(argc, argv);
+#endif
 #ifdef PKG_EXTRACTOR_WITH_QT
     if (argc == 1)
     {

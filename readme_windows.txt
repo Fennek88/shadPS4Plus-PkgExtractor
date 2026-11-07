@@ -2,7 +2,7 @@
 	
 	Double click "Start Pkg Extractor.bat" "pkg-extractor-windows\pkg_extractor.exe" to open the GUI.
 	Don't extract it out of the folder.
-	Can be also called in command line.
+	Use pkg_extractor_cli.exe for command-line extraction.
 	The first argument is the path to the pkg file to extract.
 	The second argument is where to extract it.
 	If no second argument is provided, it will be extracted next to the pkg file.
@@ -11,7 +11,9 @@
 	--check-type (legacy: exit code 101 game, 102 update, 103 dlc).
 	Exit codes: 0 success, 1 failure, 2 invalid usage. Errors go to stderr.
 	
-	Alternatively, you can drag and drop the pkg file onto the exe and it will extract it at the same location.
+	Alternatively, you can drag and drop the pkg file onto pkg_extractor_cli.exe and it will extract it at the same location.
+	Older installations require a manual upgrade to this version. Update scripts that call
+	pkg_extractor.exe to call pkg_extractor_cli.exe instead.
 
 
 2. install_pkg.bat

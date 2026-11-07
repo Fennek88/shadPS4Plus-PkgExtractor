@@ -31,8 +31,10 @@ Pass the PKG path followed by an optional output directory:
 On Windows:
 
 ```powershell
-.\pkg_extractor.exe C:\path\to\game.pkg C:\path\to\output
+.\pkg_extractor_cli.exe C:\path\to\game.pkg C:\path\to\output
 ```
+
+On Windows, `pkg_extractor.exe` is the windowed GUI; use `pkg_extractor_cli.exe` for command-line output, exit codes, and drag-and-drop extraction. Existing scripts that call `pkg_extractor.exe` must be changed to use `pkg_extractor_cli.exe`. Older Windows updaters cannot install releases containing the additional executable; install this version manually once.
 
 If the output directory is omitted, files are extracted beneath the current working directory. The extractor creates the package-specific subdirectory described above.
 
@@ -51,14 +53,17 @@ CLI reference: `pkg_extractor <pkg> [output-dir] [--no-pause]` extracts a packag
 - CMake 3.20 or newer (the first release that supports `CMAKE_CXX_STANDARD 23`)
 - A C++23 compiler
 - GNU Make (used to build the bundled Crypto++)
-- Qt 6 Widgets
+- Qt 6 Widgets and Network
 - zlib 1.3 or newer
+- libarchive (Linux, macOS and Windows)
 
 Install the Qt and zlib development packages for your platform. For example, on Ubuntu:
 
 ```sh
-sudo apt install build-essential cmake qt6-base-dev zlib1g-dev
+sudo apt install build-essential cmake qt6-base-dev zlib1g-dev libarchive-dev
 ```
+
+On macOS with Homebrew, install `qt`, `zlib` and `libarchive`, and include their prefixes in `CMAKE_PREFIX_PATH`.
 
 Configure and build from the repository root:
 

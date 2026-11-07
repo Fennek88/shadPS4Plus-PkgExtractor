@@ -10,7 +10,7 @@ set "gamesDir=%GAMES_DIR%"
 set "addonsDir=%ADDONS_DIR%"
 if not defined gamesDir set "gamesDir=PATH_TO_GAMES_DIR"
 if not defined addonsDir set "addonsDir=PATH_TO_ADDONS_DIR"
-set "extractor=%~dp0pkg_extractor.exe"
+set "extractor=%~dp0pkg_extractor_cli.exe"
 set "rc=0"
 
 if "%pkg%"=="" (

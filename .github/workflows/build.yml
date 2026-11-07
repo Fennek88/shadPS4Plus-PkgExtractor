@@ -5,7 +5,33 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
+  release-version:
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-24.04
+    outputs:
+      publish: ${{ steps.version.outputs.publish }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate release version
+        id: version
+        shell: bash
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Not a numeric X.X.X release tag; skipping publication."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          version=$(sed -nE 's/^[[:space:]]*project\(PkgExtractor VERSION ([0-9]+\.[0-9]+\.[0-9]+)\)[[:space:]]*$/\1/p' CMakeLists.txt)
+          if [[ "$GITHUB_REF_NAME" != "$version" ]]; then
+            echo "Tag '$GITHUB_REF_NAME' does not match the version '$version' in CMakeLists.txt." >&2
+            exit 1
+          fi
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+
   linux:
     runs-on: ubuntu-24.04
     steps:
@@ -13,7 +39,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --yes build-essential cmake qt6-base-dev zlib1g-dev
+          sudo apt-get install --yes build-essential cmake qt6-base-dev zlib1g-dev libarchive-dev
       - name: Configure
         run: cmake -S . -B build/linux -DCMAKE_BUILD_TYPE=Release
       - name: Build
@@ -36,7 +62,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install --yes build-essential cmake qt6-base-dev zlib1g-dev
+          sudo apt-get install --yes build-essential cmake qt6-base-dev zlib1g-dev libarchive-dev
       - name: Configure
         run: cmake -S . -B build/asan -DCMAKE_BUILD_TYPE=RelWithDebInfo -DPKG_EXTRACTOR_SANITIZE=ON
       - name: Build
@@ -51,20 +77,53 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Install build dependencies
-        run: brew install qt zlib
+        run: brew install qt zlib libarchive
       - name: Configure
-        run: cmake -S . -B build/macos -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(brew --prefix qt);$(brew --prefix zlib)" -DZLIB_USE_STATIC_LIBS=ON
+        run: cmake -S . -B build/macos -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$(brew --prefix qt);$(brew --prefix zlib);$(brew --prefix libarchive)" -DZLIB_USE_STATIC_LIBS=ON
       - name: Build
         run: cmake --build build/macos --parallel 2
       - name: Test
         run: ctest --test-dir build/macos --output-on-failure
       - name: Bundle Qt frameworks
         run: |
-          "$(brew --prefix qt)/bin/macdeployqt" "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" -verbose=3
+          "$(brew --prefix qt)/bin/macdeployqt" "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" \
+            -libpath="$(brew --prefix qt)/lib" -no-plugins -verbose=1 2>&1 | tee "$RUNNER_TEMP/macdeployqt-frameworks.log"
+          if grep -E '(^|[[:space:]])ERROR:' "$RUNNER_TEMP/macdeployqt-frameworks.log"; then
+            echo "macdeployqt reported errors while bundling frameworks." >&2
+            exit 1
+          fi
+          "$(brew --prefix qt)/bin/macdeployqt" "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" \
+            -libpath="$(brew --prefix qt)/lib" -always-overwrite -verbose=1 2>&1 | tee "$RUNNER_TEMP/macdeployqt-plugins.log"
+          if grep -E '(^|[[:space:]])ERROR:' "$RUNNER_TEMP/macdeployqt-plugins.log"; then
+            echo "macdeployqt reported errors while bundling plugins." >&2
+            exit 1
+          fi
+          bash scripts/bundle_macos_tls.sh "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" "$(brew --prefix qt)"
+          bash tests/run_mac_tls_probe.sh "$GITHUB_WORKSPACE/build/macos/pkg_extractor.app" "$(brew --prefix qt)"
+      - name: Create macOS disk image
+        run: |
+          mkdir -p "$RUNNER_TEMP/pkg-extractor-macos"
+          ditto build/macos/pkg_extractor.app "$RUNNER_TEMP/pkg-extractor-macos/pkg_extractor.app"
+          ln -s /Applications "$RUNNER_TEMP/pkg-extractor-macos/Applications"
+          hdiutil create -volname "PKG Extractor" \
+            -srcfolder "$RUNNER_TEMP/pkg-extractor-macos" -format UDZO \
+            "$RUNNER_TEMP/pkg-extractor-macos.dmg"
+          ditto -c -k --sequesterRsrc --keepParent build/macos/pkg_extractor.app \
+            "$RUNNER_TEMP/pkg-extractor-macos.zip"
+      - name: Test packaged macOS updates
+        env:
+          PKG_TEST_MAC_DMG: ${{ runner.temp }}/pkg-extractor-macos.dmg
+          PKG_TEST_MAC_BUNDLE: ${{ github.workspace }}/build/macos/pkg_extractor.app
+        run: ctest --test-dir build/macos --output-on-failure -R pkg_extractor_tests
+      - uses: actions/upload-artifact@v6
+        with:
+          name: pkg-extractor-macos-dmg
+          path: ${{ runner.temp }}/pkg-extractor-macos.dmg
+          if-no-files-found: error
       - uses: actions/upload-artifact@v6
         with:
           name: pkg-extractor-macos
-          path: build/macos/**/pkg_extractor.app/**
+          path: ${{ runner.temp }}/pkg-extractor-macos.zip
 
   windows:
     runs-on: windows-latest
@@ -84,6 +143,7 @@ jobs:
             mingw-w64-ucrt-x86_64-toolchain
             mingw-w64-ucrt-x86_64-qt6-base
             mingw-w64-ucrt-x86_64-zlib
+            mingw-w64-ucrt-x86_64-libarchive
             mingw-w64-ucrt-x86_64-ntldd
       - name: Configure
         run: cmake -S . -B build/windows -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/ucrt64
@@ -91,6 +151,10 @@ jobs:
         run: cmake --build build/windows --parallel 2
       - name: Test
         run: ctest --test-dir build/windows --output-on-failure
+      - name: Verify Windows executable subsystems
+        run: |
+          objdump -p build/windows/pkg_extractor.exe | grep -Eq 'Subsystem[[:space:]]+0*2[[:space:]]'
+          objdump -p build/windows/pkg_extractor_cli.exe | grep -Eq 'Subsystem[[:space:]]+0*3[[:space:]]'
       - name: Bundle Windows executable
         run: |
           mkdir -p dist/pkg-extractor-windows
@@ -99,10 +163,10 @@ jobs:
           else
             windeployqt --release --compiler-runtime --no-translations --dir dist/pkg-extractor-windows build/windows/pkg_extractor.exe
           fi
-          cp build/windows/pkg_extractor.exe dist/pkg-extractor-windows/
+          cp build/windows/pkg_extractor.exe build/windows/pkg_extractor_cli.exe dist/pkg-extractor-windows/
           mapfile -d '' deployed_dlls < <(find dist/pkg-extractor-windows -type f -iname '*.dll' -print0)
-          dependencies=$(ntldd -R build/windows/pkg_extractor.exe "${deployed_dlls[@]}")
-          direct_dependencies=$(ntldd build/windows/pkg_extractor.exe "${deployed_dlls[@]}")
+          dependencies=$(ntldd -R build/windows/pkg_extractor.exe build/windows/pkg_extractor_cli.exe "${deployed_dlls[@]}")
+          direct_dependencies=$(ntldd build/windows/pkg_extractor.exe build/windows/pkg_extractor_cli.exe "${deployed_dlls[@]}")
           unresolved=$(printf '%s\n' "$direct_dependencies" \
             | sed -nE '/=> not found$/p' \
             | grep -viE '^[[:space:]]*(api-ms-win-|ext-ms-win-)' || true)
@@ -126,3 +190,49 @@ jobs:
         with:
           name: pkg-extractor-windows
           path: dist/
+
+  release:
+    if: needs.release-version.outputs.publish == 'true'
+    needs: [release-version, linux, linux-sanitizers, macos, windows]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v6
+        with:
+          name: pkg-extractor-linux
+          path: release-input/linux
+      - uses: actions/download-artifact@v6
+        with:
+          name: pkg-extractor-macos-dmg
+          path: release-input/macos
+      - uses: actions/download-artifact@v6
+        with:
+          name: pkg-extractor-windows
+          path: release-input/windows
+      - name: Package release assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir release
+          test -f release-input/linux/pkg_extractor
+          test -f release-input/linux/readme_linux.txt
+          test -f release-input/windows/pkg-extractor-windows/pkg_extractor.exe
+          test -f release-input/windows/pkg-extractor-windows/pkg_extractor_cli.exe
+          test -f "release-input/windows/Start Pkg Extractor.bat"
+          test -f release-input/macos/pkg-extractor-macos.dmg
+          cp release-input/linux/pkg_extractor "release/pkg-extractor-linux-${GITHUB_REF_NAME}"
+          (cd release-input/windows && zip -qr "../../release/pkg-extractor-windows-${GITHUB_REF_NAME}.zip" .)
+          mv release-input/macos/pkg-extractor-macos.dmg "release/pkg-extractor-macos-${GITHUB_REF_NAME}.dmg"
+          (cd release && sha256sum "pkg-extractor-linux-${GITHUB_REF_NAME}" \
+            "pkg-extractor-macos-${GITHUB_REF_NAME}.dmg" \
+            "pkg-extractor-windows-${GITHUB_REF_NAME}.zip" > SHA256SUMS.txt)
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/pkg-extractor-linux-${{ github.ref_name }}
+            release/pkg-extractor-macos-${{ github.ref_name }}.dmg
+            release/pkg-extractor-windows-${{ github.ref_name }}.zip
+            release/SHA256SUMS.txt
+          fail_on_unmatched_files: true

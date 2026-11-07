@@ -4,9 +4,11 @@
 #include <QActionGroup>
 #include <QCloseEvent>
 #include <QDesktopServices>
+#include <QDebug>
 #include <QDir>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QEventLoop>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QHBoxLayout>
@@ -18,15 +20,34 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QMainWindow>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
 #include <QPlainTextEdit>
 #include <QProgressBar>
+#include <QProgressDialog>
+#include <QProcess>
 #include <QPushButton>
 #include <QUrl>
+#include <QTimer>
+#include <QTemporaryDir>
+#include <QSysInfo>
+#include <QVersionNumber>
 #include <QVBoxLayout>
 #include <QWidget>
 
 #include "app/extraction_thread.h"
 #include "app/gui_utils.h"
+#include "app/linux_update.h"
+#include "app/release_info.h"
+#include "app/update_settings.h"
+#ifdef Q_OS_WIN
+#include "app/windows_update.h"
+#include "app/windows_update_archive.h"
+#endif
+#ifdef Q_OS_MACOS
+#include "app/mac_update.h"
+#endif
 #include "common/translations/translations.h"
 
 namespace
@@ -114,6 +135,9 @@ namespace
             exitAction_ = fileMenu_->addAction(QString());
             extrasMenu_ = menuBar_->addMenu(QString());
             languageMenu_ = extrasMenu_->addMenu(QString());
+            checkUpdatesAction_ = extrasMenu_->addAction(QString());
+            githubAction_ = extrasMenu_->addAction(QString());
+            network_ = new QNetworkAccessManager(this);
 
             auto* languageGroup = new QActionGroup(this);
             languageGroup->setExclusive(true);
@@ -140,6 +164,16 @@ namespace
             connect(openPkgAction_, &QAction::triggered, this, [this] { SelectInputFile(); });
             connect(outputDirectoryAction_, &QAction::triggered, this, [this] { SelectOutputDirectory(); });
             connect(exitAction_, &QAction::triggered, this, &QWidget::close);
+            connect(checkUpdatesAction_, &QAction::triggered, this, [this] { CheckForUpdates(false); });
+            connect(githubAction_, &QAction::triggered, this, [this]
+            {
+                const QUrl url(QStringLiteral("https://github.com/Fennek88/shadPS4Plus-PkgExtractor"));
+                if (!QDesktopServices::openUrl(url))
+                {
+                    QMessageBox::warning(this, Translate(QStringLiteral("Could not open GitHub")),
+                        Translate(QStringLiteral("Could not open the GitHub repository: %1")).arg(url.toString()));
+                }
+            });
 
             // Keep translated labels and buttons from changing the window's layout dimensions.
             setMinimumWidth(680);
@@ -210,6 +244,7 @@ namespace
             connect(executeButton_, &QPushButton::clicked, this, [this] { StartExtraction(); });
             connect(cancelButton_, &QPushButton::clicked, this, [this] { ConfirmCancellation(); });
             UpdateTexts();
+            QTimer::singleShot(0, this, [this] { CheckForUpdates(true); });
         }
 
     protected:
@@ -229,13 +264,17 @@ namespace
         // Apply the currently selected language to all visible controls and menu actions.
         void UpdateTexts()
         {
-            setWindowTitle(Translate(QStringLiteral("ShadPS4Plus PKG Extractor")));
+            setWindowTitle(Translate(QStringLiteral("ShadPS4Plus PKG Extractor")) +
+                           QStringLiteral(" ") + QStringLiteral(PKG_EXTRACTOR_VERSION));
             fileMenu_->setTitle(Translate(QStringLiteral("File")));
             openPkgAction_->setText(Translate(QStringLiteral("Open PKG")));
             outputDirectoryAction_->setText(Translate(QStringLiteral("Output Directory")));
             exitAction_->setText(Translate(QStringLiteral("Exit")));
             extrasMenu_->setTitle(Translate(QStringLiteral("Extras")));
             languageMenu_->setTitle(Translate(QStringLiteral("Language")));
+            checkUpdatesAction_->setText(Translate(checkUpdatesAction_->isEnabled()
+                ? QStringLiteral("Check for Updates") : QStringLiteral("Checking for Updates...")));
+            githubAction_->setText(Translate(QStringLiteral("GitHub Repository")));
             inputPath_->setPlaceholderText(Translate(QStringLiteral("Select a PKG file")));
             outputPath_->setPlaceholderText(Translate(QStringLiteral("Select an output directory")));
             inputLabel_->setText(Translate(QStringLiteral("Input file:")));
@@ -249,6 +288,377 @@ namespace
                 statusLabel_->setText(Translate(QStringLiteral("Choose a PKG file and output directory.")));
             }
         }
+
+        void CheckForUpdates(bool automatic)
+        {
+            checkUpdatesAction_->setEnabled(false);
+            checkUpdatesAction_->setText(Translate(QStringLiteral("Checking for Updates...")));
+            QNetworkRequest request(QUrl(QStringLiteral(
+                "https://api.github.com/repos/Fennek88/shadPS4Plus-PkgExtractor/releases/latest")));
+            request.setRawHeader("Accept", "application/vnd.github+json");
+            request.setRawHeader("User-Agent", "shadPS4Plus-PkgExtractor");
+            request.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+                                 QNetworkRequest::NoLessSafeRedirectPolicy);
+            auto* reply = network_->get(request);
+            auto* timer = new QTimer(reply);
+            timer->setSingleShot(true);
+            connect(timer, &QTimer::timeout, reply, [reply]
+            {
+                reply->setProperty("updateTimeout", true);
+                reply->abort();
+            });
+            timer->start(15000);
+            connect(reply, &QNetworkReply::readyRead, reply, [reply]
+            {
+                if (reply->bytesAvailable() > 1024 * 1024)
+                {
+                    reply->setProperty("updateTooLarge", true);
+                    reply->abort();
+                }
+            });
+            connect(reply, &QNetworkReply::finished, this, [this, reply, automatic]
+            {
+                checkUpdatesAction_->setEnabled(true);
+                checkUpdatesAction_->setText(Translate(QStringLiteral("Check for Updates")));
+                reply->deleteLater();
+                QString error;
+                if (reply->property("updateTimeout").toBool())
+                    error = Translate(QStringLiteral("The update check timed out."));
+                else if (reply->property("updateTooLarge").toBool())
+                    error = Translate(QStringLiteral("The release response is too large."));
+                else if (reply->error() != QNetworkReply::NoError)
+                    error = Translate(QStringLiteral("Could not contact GitHub: %1")).arg(reply->errorString());
+                else if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 200)
+                    error = Translate(QStringLiteral("GitHub returned HTTP status %1."))
+                        .arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+
+                const QByteArray response = reply->readAll();
+                ReleaseInfo release;
+                if (error.isEmpty() && !ParseReleaseInfo(response, release, error))
+                    error = Translate(error);
+                if (!error.isEmpty())
+                {
+                    if (automatic)
+                        qWarning().noquote() << "Automatic update check failed:" << error;
+                    else
+                        QMessageBox::warning(this, Translate(QStringLiteral("Update check failed")), error);
+                    return;
+                }
+
+                const QVersionNumber current = QVersionNumber::fromString(QStringLiteral(PKG_EXTRACTOR_VERSION));
+                if (QVersionNumber::compare(release.version.normalized(), current.normalized()) <= 0)
+                {
+                    if (!automatic)
+                        QMessageBox::information(this, Translate(QStringLiteral("Check for Updates")),
+                            Translate(QStringLiteral("No newer release is available. Installed: %1; latest: %2."))
+                                .arg(current.toString(), release.version.toString()));
+                    return;
+                }
+                const QString settingsPath = UpdateSettingsPath();
+                if (automatic)
+                {
+                    QVersionNumber skipped;
+                    QString settingsError;
+                    if (!ReadSkippedVersion(settingsPath, skipped, settingsError))
+                    {
+                        qWarning().noquote() << "Automatic update check failed:" << settingsError;
+                        return;
+                    }
+                    if (!ShouldNotifyUpdate(current, release.version, skipped, true))
+                        return;
+                }
+                if (thread_ != nullptr)
+                {
+                    if (automatic)
+                        qWarning().noquote() << "Automatic update notification not shown: extraction is running.";
+                    else
+                        QMessageBox::information(this, Translate(QStringLiteral("Update unavailable")),
+                            Translate(QStringLiteral("Wait for extraction to finish before updating.")));
+                    return;
+                }
+                QString manualPrompt = Translate(QStringLiteral(
+                    "Version %1 is available (installed: %2). Open the release page?"))
+                    .arg(release.version.toString(), current.toString());
+#ifdef Q_OS_LINUX
+                LinuxReleaseAsset asset;
+                QString assetError;
+                const QString executable = QCoreApplication::applicationFilePath();
+                const bool managed = qEnvironmentVariableIsSet("APPIMAGE") || qEnvironmentVariableIsSet("SNAP") ||
+                    qEnvironmentVariableIsSet("FLATPAK_ID") || QFileInfo::exists(QStringLiteral("/.flatpak-info")) ||
+                    executable.startsWith(QStringLiteral("/usr/")) ||
+                    executable.startsWith(QStringLiteral("/bin/")) ||
+                    executable.startsWith(QStringLiteral("/sbin/")) ||
+                    executable.startsWith(QStringLiteral("/opt/"));
+                if (!managed && QSysInfo::currentCpuArchitecture() == QStringLiteral("x86_64") &&
+                    FindLinuxReleaseAsset(response, release, asset, assetError))
+                {
+                    QMessageBox dialog(QMessageBox::Question, Translate(QStringLiteral("Update available")),
+                        Translate(QStringLiteral("Version %1 is available (installed: %2). Download and install it?"))
+                            .arg(release.version.toString(), current.toString()),
+                        QMessageBox::Yes | QMessageBox::No, this);
+                    auto* skip = dialog.addButton(Translate(QStringLiteral("Skip this version")), QMessageBox::ActionRole);
+                    dialog.setDefaultButton(QMessageBox::No);
+                    const auto answer = dialog.exec();
+                    if (dialog.clickedButton() == skip)
+                        SaveSkippedVersion(settingsPath, release.version);
+                    else if (answer == QMessageBox::Yes)
+                    {
+                        ClearSkippedVersionForUpdate(settingsPath, release.version);
+                        DownloadUpdate(asset.url, asset.size, release.url, &asset, nullptr, nullptr);
+                    }
+                    return;
+                }
+                if (!assetError.isEmpty())
+                    manualPrompt += QStringLiteral("\n\n") + Translate(assetError);
+#endif
+#ifdef Q_OS_WIN
+                WindowsReleaseAsset windowsAsset;
+                QString windowsError;
+                if (QSysInfo::currentCpuArchitecture() == QStringLiteral("x86_64") &&
+                    CanUpdateWindowsInstallation(QCoreApplication::applicationFilePath(), windowsError) &&
+                    FindWindowsReleaseAsset(response, release, windowsAsset, windowsError))
+                {
+                    QMessageBox dialog(QMessageBox::Question, Translate(QStringLiteral("Update available")),
+                        Translate(QStringLiteral("Version %1 is available (installed: %2). Download and install it?"))
+                            .arg(release.version.toString(), current.toString()),
+                        QMessageBox::Yes | QMessageBox::No, this);
+                    auto* skip = dialog.addButton(Translate(QStringLiteral("Skip this version")), QMessageBox::ActionRole);
+                    dialog.setDefaultButton(QMessageBox::No);
+                    const auto answer = dialog.exec();
+                    if (dialog.clickedButton() == skip)
+                        SaveSkippedVersion(settingsPath, release.version);
+                    else if (answer == QMessageBox::Yes)
+                    {
+                        ClearSkippedVersionForUpdate(settingsPath, release.version);
+                        DownloadUpdate(windowsAsset.url, windowsAsset.size, release.url, nullptr, &windowsAsset, nullptr);
+                    }
+                    return;
+                }
+                if (!windowsError.isEmpty())
+                    manualPrompt += QStringLiteral("\n\n") + Translate(windowsError);
+#endif
+#ifdef Q_OS_MACOS
+                MacReleaseAsset macAsset;
+                QString macError;
+                QString bundle;
+                if (QSysInfo::currentCpuArchitecture() == QStringLiteral("arm64") &&
+                    CanUpdateMacInstallation(QCoreApplication::applicationFilePath(), bundle, macError) &&
+                    FindMacReleaseAsset(response, release, macAsset, macError))
+                {
+                    QMessageBox dialog(QMessageBox::Question, Translate(QStringLiteral("Update available")),
+                        Translate(QStringLiteral("Version %1 is available (installed: %2). Download and install it?"))
+                            .arg(release.version.toString(), current.toString()),
+                        QMessageBox::Yes | QMessageBox::No, this);
+                    auto* skip = dialog.addButton(Translate(QStringLiteral("Skip this version")), QMessageBox::ActionRole);
+                    dialog.setDefaultButton(QMessageBox::No);
+                    const auto answer = dialog.exec();
+                    if (dialog.clickedButton() == skip)
+                        SaveSkippedVersion(settingsPath, release.version);
+                    else if (answer == QMessageBox::Yes)
+                    {
+                        ClearSkippedVersionForUpdate(settingsPath, release.version);
+                        DownloadUpdate(macAsset.url, macAsset.size, release.url, nullptr, nullptr, &macAsset);
+                    }
+                    return;
+                }
+                if (!macError.isEmpty())
+                    manualPrompt += QStringLiteral("\n\n") + Translate(macError);
+#endif
+                QMessageBox dialog(QMessageBox::Question, Translate(QStringLiteral("Update available")),
+                                   manualPrompt, QMessageBox::Yes | QMessageBox::No, this);
+                auto* skip = dialog.addButton(Translate(QStringLiteral("Skip this version")), QMessageBox::ActionRole);
+                dialog.setDefaultButton(QMessageBox::No);
+                const auto answer = dialog.exec();
+                if (dialog.clickedButton() == skip)
+                    SaveSkippedVersion(settingsPath, release.version);
+                else if (answer == QMessageBox::Yes && !QDesktopServices::openUrl(release.url))
+                {
+                    QMessageBox::warning(this, Translate(QStringLiteral("Could not open release page")),
+                        Translate(QStringLiteral("Could not open the release page: %1")).arg(release.url.toString()));
+                }
+            });
+        }
+
+        void SaveSkippedVersion(const QString& path, const QVersionNumber& version)
+        {
+            QString error;
+            if (!WriteSkippedVersion(path, version, error))
+                QMessageBox::warning(this, Translate(QStringLiteral("Update check failed")), Translate(error));
+        }
+
+        void ClearSkippedVersionForUpdate(const QString& path, const QVersionNumber& version)
+        {
+            QString error;
+            if (!ClearMatchingSkippedVersion(path, version, error))
+                QMessageBox::warning(this, Translate(QStringLiteral("Update check failed")), Translate(error));
+        }
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN) || defined(Q_OS_MACOS)
+        void DownloadUpdate(const QUrl& url, qint64 size, const QUrl& releaseUrl,
+                            const LinuxReleaseAsset* linuxAsset, const WindowsReleaseAsset* windowsAsset,
+                            const MacReleaseAsset* macAsset)
+        {
+            QNetworkRequest request(url);
+            request.setRawHeader("User-Agent", "shadPS4Plus-PkgExtractor");
+            request.setAttribute(QNetworkRequest::RedirectPolicyAttribute,
+                                 QNetworkRequest::NoLessSafeRedirectPolicy);
+            auto* reply = network_->get(request);
+            QProgressDialog progress(Translate(QStringLiteral("Downloading update...")),
+                                     Translate(QStringLiteral("Cancel")), 0, 100, this);
+            progress.setWindowModality(Qt::WindowModal);
+            progress.setMinimumDuration(0);
+            progress.setAutoClose(false);
+            progress.setAutoReset(false);
+            QEventLoop loop;
+            QTimer timeout;
+            timeout.setSingleShot(true);
+            bool timedOut = false;
+            bool cancelled = false;
+            bool tooLarge = false;
+            QByteArray data;
+            connect(&timeout, &QTimer::timeout, &loop, [&]
+            {
+                timedOut = true;
+                reply->abort();
+            });
+            connect(&progress, &QProgressDialog::canceled, &loop, [&]
+            {
+                cancelled = true;
+                reply->abort();
+            });
+            connect(reply, &QNetworkReply::readyRead, &loop, [&]
+            {
+                while (reply->bytesAvailable() > 0)
+                {
+                    const QByteArray chunk = reply->read(64 * 1024);
+                    if (chunk.isEmpty())
+                        break;
+                    if (data.size() + chunk.size() > size)
+                    {
+                        tooLarge = true;
+                        reply->abort();
+                        break;
+                    }
+                    data.append(chunk);
+                }
+            });
+            connect(reply, &QNetworkReply::downloadProgress, &progress, [&](qint64 received, qint64)
+            {
+                progress.setValue(static_cast<int>(qBound<qint64>(0, received, size) * 100 / size));
+            });
+            connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+            timeout.start(120000);
+            progress.show();
+            loop.exec();
+            timeout.stop();
+            disconnect(&progress, &QProgressDialog::canceled, &loop, nullptr);
+            progress.close();
+            QString error;
+            if (cancelled)
+            {
+                reply->deleteLater();
+                return;
+            }
+            if (timedOut)
+                error = Translate(QStringLiteral("The update download timed out."));
+            else if (tooLarge)
+                error = Translate(QStringLiteral("The downloaded update is larger than expected."));
+            else if (reply->error() != QNetworkReply::NoError)
+                error = Translate(QStringLiteral("Could not download the update: %1")).arg(reply->errorString());
+            else if (reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt() != 200)
+                error = Translate(QStringLiteral("GitHub returned HTTP status %1."))
+                    .arg(reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt());
+            reply->deleteLater();
+            QString backup;
+            const QString executable = QCoreApplication::applicationFilePath();
+#ifdef Q_OS_LINUX
+            Q_UNUSED(windowsAsset);
+            Q_UNUSED(macAsset);
+            if (error.isEmpty() &&
+                !InstallLinuxUpdate(executable, data, *linuxAsset, backup, error))
+            {
+                // Translate the fixed part of errors containing system details separately.
+                const int separator = error.indexOf(QStringLiteral(": "));
+                if (separator >= 0)
+                    error = Translate(error.left(separator + 2) + QStringLiteral("%1"))
+                        .arg(error.mid(separator + 2));
+                else
+                    error = Translate(error);
+            }
+#elif defined(Q_OS_WIN)
+            Q_UNUSED(linuxAsset);
+            Q_UNUSED(macAsset);
+            QTemporaryDir stage(QDir::tempPath() + QStringLiteral("/pkg-extractor-update-XXXXXX"));
+            QStringList files;
+            if (error.isEmpty() && !stage.isValid())
+                error = Translate(QStringLiteral("Could not create an update staging directory."));
+            if (error.isEmpty() && !StageWindowsUpdate(data, *windowsAsset, stage.path(), files, error))
+                error = Translate(error);
+#else
+            Q_UNUSED(linuxAsset);
+            Q_UNUSED(windowsAsset);
+            QString bundle;
+            if (error.isEmpty() && !CanUpdateMacInstallation(executable, bundle, error))
+                error = Translate(error);
+            QTemporaryDir stage((bundle.isEmpty() ? QDir::tempPath() : QFileInfo(bundle).absolutePath()) +
+                                QStringLiteral("/.pkg-update-XXXXXX"));
+            if (stage.isValid())
+                stage.setAutoRemove(false);
+            if (error.isEmpty() && !stage.isValid())
+                error = Translate(QStringLiteral("Could not create an update staging directory."));
+            if (error.isEmpty() && !StageMacUpdate(data, *macAsset, stage.path(), error))
+                error = Translate(error);
+#endif
+            if (!error.isEmpty())
+            {
+                const auto answer = QMessageBox::warning(this, Translate(QStringLiteral("Update failed")),
+                    error + QStringLiteral("\n\n") +
+                        Translate(QStringLiteral("Open the release page for manual installation?")),
+                    QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+                if (answer == QMessageBox::Yes && !QDesktopServices::openUrl(releaseUrl))
+                    QMessageBox::warning(this, Translate(QStringLiteral("Could not open release page")),
+                        Translate(QStringLiteral("Could not open the release page: %1")).arg(releaseUrl.toString()));
+                return;
+            }
+#ifdef Q_OS_LINUX
+            const auto answer = QMessageBox::question(this, Translate(QStringLiteral("Update installed")),
+                Translate(QStringLiteral("The update is installed. A backup was saved at %1. Restart now?")).arg(backup),
+                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            if (answer == QMessageBox::Yes)
+            {
+                if (QProcess::startDetached(executable, {}))
+                    close();
+                else
+                    QMessageBox::warning(this, Translate(QStringLiteral("Could not restart")),
+                        Translate(QStringLiteral("Please restart the application manually.")));
+            }
+#else
+            const auto answer = QMessageBox::question(this, Translate(QStringLiteral("Update ready")),
+                Translate(QStringLiteral("The update is ready. Install it and restart now?")),
+                QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            if (answer != QMessageBox::Yes)
+                return;
+#ifdef Q_OS_WIN
+            const bool started = StartWindowsUpdate(stage.path(), files, executable, error);
+#else
+            const bool started = StartMacUpdate(stage.path(), bundle, error);
+#endif
+            if (!started)
+            {
+                const auto fallback = QMessageBox::warning(this, Translate(QStringLiteral("Update failed")),
+                    Translate(error) + QStringLiteral("\n\n") +
+                        Translate(QStringLiteral("Open the release page for manual installation?")),
+                    QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+                if (fallback == QMessageBox::Yes && !QDesktopServices::openUrl(releaseUrl))
+                    QMessageBox::warning(this, Translate(QStringLiteral("Could not open release page")),
+                        Translate(QStringLiteral("Could not open the release page: %1")).arg(releaseUrl.toString()));
+                return;
+            }
+            stage.setAutoRemove(false);
+            close();
+#endif
+        }
+#endif
 
         void SelectInputFile()
         {
@@ -428,6 +838,9 @@ namespace
         QAction* openPkgAction_ = nullptr;
         QAction* outputDirectoryAction_ = nullptr;
         QAction* exitAction_ = nullptr;
+        QAction* checkUpdatesAction_ = nullptr;
+        QAction* githubAction_ = nullptr;
+        QNetworkAccessManager* network_ = nullptr;
         ExtractionThread* thread_ = nullptr;
     };
 } // namespace
