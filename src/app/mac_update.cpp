@@ -144,7 +144,7 @@ bool StageMacUpdate(const QByteArray& data, const MacReleaseAsset& asset, const 
     if (!Run(QStringLiteral("/usr/bin/codesign"),
              {QStringLiteral("--verify"), QStringLiteral("--deep"), QStringLiteral("--strict"), payload}, error) ||
         !Run(QStringLiteral("/usr/bin/lipo"),
-             {QStringLiteral("-verify_arch"), QStringLiteral("arm64"), exe}, error))
+             {exe, QStringLiteral("-verify_arch"), QStringLiteral("arm64")}, error))
         return false;
     if (::chmod(QFile::encodeName(exe).constData(), 0755) != 0)
     {
