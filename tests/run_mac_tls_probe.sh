@@ -1,8 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-if [[ $# != 2 ]]; then
-    echo "Usage: $0 app-bundle qt-prefix" >&2
+if [[ $# != 2 && $# != 3 ]]; then
+    echo "Usage: $0 app-bundle qt-prefix [https-url]" >&2
     exit 2
 fi
 
@@ -33,4 +33,4 @@ for framework in QtCore QtNetwork; do
         "@executable_path/../Frameworks/$framework.framework/Versions/A/$framework" "$probe"
 done
 codesign --force --sign - "$probe"
-"$probe" "$app/Contents/PlugIns"
+"$probe" "$app/Contents/PlugIns" "${@:3}"
